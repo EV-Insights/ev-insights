@@ -1,0 +1,5 @@
+{
+    "storage_uri": "file:///<folder_path>\\mlflow",
+    "host": "127.0.0.1",
+    "port": 5000
+}

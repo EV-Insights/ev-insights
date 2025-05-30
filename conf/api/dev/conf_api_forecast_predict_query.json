@@ -1,0 +1,68 @@
+{
+    "service": "forecast",
+    "services": {
+        "forecast": {
+            "name": "forecast",
+            "output_dir": "service/forecast",
+            "models_dir": "../../data/input/forecast_models/",
+            "interfaces": {
+                "input": {
+                    "name": "PostgreSql",
+                    "type": "input",
+                    "output_dir": "interface/input",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                },
+                "output": {
+                    "name": "PostgreSql",
+                    "type": "output",
+                    "output_dir": "interface/output",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                }
+            },
+            "utils": {
+                "input_dir": "../../data/input/",
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            },
+            "forecast": [
+                {
+                    "id": 1,
+                    "name": "xgboost_charge_duration",
+                    "algo": "xgboost",
+                    "info": "",
+                    "actor": null,
+                    "actor_id": null,
+                    "date": null,
+                    "enabled": true,
+                    "full_custom_mode": false,
+                    "mode": "predict",
+                    "submode": "query",
+                    "model_name": "xgboost_charge_duration_DummyPilot",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": false,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                        }
+                    },
+                    "custom_params": {
+                    }
+                }
+            ]
+        }
+    }
+}

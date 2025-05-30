@@ -1,0 +1,183 @@
+{
+    "service": "forecast",
+    "services": {
+        "forecast": {
+            "name": "forecast",
+            "output_dir": "service/forecast",
+            "models_dir": "../../data/input/forecast_models/",
+            "interfaces": {
+                "input": {
+                    "name": "PostgreSql",
+                    "type": "input",
+                    "output_dir": "interface/input",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                },
+                "output": {
+                    "name": "File",
+                    "type": "output",
+                    "input_dir": "",
+                    "output_dir": "interface/output",
+                    "limit_rows": 100,
+                    "datasets_list": [],
+                    "datasets_details_file": ""
+                },
+                "mlflow": {
+                    "name": "MLflow",
+                    "type": "mlflow",
+                    "output_dir": "mlflow",
+                    "mlflow_dir": "../mlflow",
+                    "host": "localhost",
+                    "port": "5000",
+                    "user": "mlflow",
+                    "password": "mlflow",
+                    "bucket_name": "mlflow",
+                    "init_storage": false
+                }
+            },
+            "utils": {
+                "input_dir": "../../data/input/",
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            },
+            "forecast": [
+                {
+                    "id": 1,
+                    "name": "xgboost_charge_duration",
+                    "algo": "xgboost",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "mode": "train",
+                    "model_name": "xgboost_charge_duration_Harvard_dataverse",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": ["Harvard_dataverse"],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": null,
+                            "energy_supplied": null,
+                            "ev_max_charging_power":  null,
+                            "user_id": 1251
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_month": null,
+                        "plug_in_weekday": null,
+                        "plug_duration": null,
+                        "avg_energy": [2, 7, 14],
+                        "avg_duration": [2, 7, 14]
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "xgboost_energy",
+                    "algo": "xgboost",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "mode": "train",
+                    "model_name": "xgboost_energy_Harvard_dataverse",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": ["Harvard_dataverse"],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": null,
+                            "energy_supplied": null,
+                            "ev_max_charging_power":  null,
+                            "user_id": 1251
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_month": null,
+                        "plug_in_weekday": null,
+                        "plug_duration": null,
+                        "avg_energy": [2, 7, 14],
+                        "avg_duration": [2, 7, 14]
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "lightgbm_station_energy",
+                    "algo": "lightgbm",
+                    "info": "",
+                    "enabled": true,
+                    "full_custom_mode": false,
+                    "mode": "train",
+                    "model_name": "lightgbm_station_energy_AMB_Barcellona",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": ["AMB_Barcellona"],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied": null,
+                            "station_id": 1867
+                        }
+                    },
+                    "custom_params": {
+                        "ts_engineering": {
+                            "lags" : {"1": "1D","2": "2D", "7": "1W", "14": "2W"},
+                            "lag_windows" : {"7": "1W"}
+                        }
+                    }
+                },
+                {
+                    "id": 4,
+                    "name": "lightgbm_station_charges",
+                    "algo": "lightgbm",
+                    "info": "",
+                    "enabled": true,
+                    "full_custom_mode": false,
+                    "mode": "train",
+                    "model_name": "lightgbm_station_charges_AMB_Barcellona",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": ["AMB_Barcellona"],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "station_id": 1867
+                        }
+                    },
+                    "custom_params": {
+                        "ts_engineering": {
+                            "lags" : {"1": "1D","2": "2D", "7": "1W", "14": "2W"},
+                            "lag_windows" : {"7": "1W"}
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

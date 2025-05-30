@@ -1,0 +1,40 @@
+{
+    "service": "ingestion",
+    "services": {
+        "ingestion": {
+            "name": "ingestion",
+            "output_dir": "service/ingestion",
+            "interfaces": {
+                "input": {
+                    "name": "File",
+                    "type": "input",
+                    "input_dir": "../../data/input/pilots/DummyPilot",
+                    "output_dir": "interface/input",
+                    "limit_rows": null,
+                    "input_data_type": "table",
+                    "datasets_list": ["DummyPilot"],
+                    "datasets_details_file": null
+                },
+                "output": {
+                    "name": "PostgreSql",
+                    "type": "output",
+                    "init_db": false,
+                    "output_dir": "interface/output",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                }
+            },
+            "utils": {
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            }
+        }
+    }
+}

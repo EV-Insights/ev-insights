@@ -1,0 +1,51 @@
+{
+    "service": "analysis",
+    "services": {
+        "analysis": {
+            "name": "analysis",
+            "output_dir": "service/analysis",
+            "interfaces": {
+                "input": {
+                    "name": "PostgreSql",
+                    "type": "input",
+                    "output_dir": "interface/input",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                },
+                "output": {
+                    "name": "PostgreSql",
+                    "type": "output",
+                    "output_dir": "interface/output",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                }
+            },
+            "utils": {
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            },
+            "analysis": [
+                {
+                    "id": 1,
+                    "name": "stats",
+                    "info": "",
+                    "enabled": true,
+                    "full_custom_mode": null,
+                    "show_images": false,
+                    "save_images": false,
+                    "save_results": true
+                }
+            ]
+        }
+    }
+}

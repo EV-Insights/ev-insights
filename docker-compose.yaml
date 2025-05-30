@@ -1,0 +1,182 @@
+# How to run: set arguments in .env file and start docker with the following command:
+# $ docker compose --env-file .env up -d
+
+volumes:
+  evinsights-data:
+  postgres-var_lib_postgresql_data:
+  pgadmin-var_lib_pgadmin:
+  minio-data:
+  prometheus-data:
+
+networks:
+  www:
+    external: true
+
+services:
+
+  evinsights:
+    image: python:3.11
+    container_name: evinsights_ev-services
+    working_dir: /data/repo/evinsights
+    volumes:
+      - ../../volumes/evinsights/evinsights-data/:/data
+    build:
+      context: .
+    environment:
+      - SERVICE_ENVIRONMENT=${SERVICE_ENVIRONMENT}
+      - SERVICE_SCHEDULE_ENABLED=${SCHEDULE_ENABLED}
+    command: sh -c "chmod 777 entrypoint.sh && ./entrypoint.sh"
+    networks:
+      - www
+    depends_on:
+      - postgres
+      - mlflow
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights-services.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights-services.entrypoints=web"
+      - "traefik.http.routers.evinsights-services.service=evinsights-services"
+      - "traefik.http.services.evinsights-services.loadbalancer.server.port=${SERVICE_PORT}"
+
+  postgres:
+    image: postgres:16
+    container_name: evinsights_postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - ../../volumes/evinsights/postgres-var_lib_postgresql_data:/var/lib/postgresql/data
+      - ../../volumes/evinsights/evinsights-data/repo/evinsights/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - www
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights_postgres.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_postgres.entrypoints=web"
+      - "traefik.http.routers.evinsights_postgres.service=evinsights_postgres"
+      - "traefik.http.services.evinsights_postgres.loadbalancer.server.port=${PG_PORT}"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: evinsights_pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - ../../volumes/evinsights/pgadmin-var_lib_pgadmin:/var/lib/pgadmin
+      - ../../volumes/evinsights/evinsights-data/repo/evinsights/servers.json:/pgadmin4/servers.json
+      - ../../volumes/evinsights/evinsights-data/repo/evinsights/config_local.py:/pgadmin4/config_local.py
+    user: '$UID:$GID'
+    networks:
+      - www
+    depends_on:
+      - postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights_pgadmin4.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_pgadmin4.entrypoints=web"
+      - "traefik.http.routers.evinsights_pgadmin4.service=evinsights_pgadmin4"
+      - "traefik.http.services.evinsights_pgadmin4.loadbalancer.server.port=${PGADMIN_PORT}"
+
+  minio:
+    restart: always
+    image: minio/minio
+    container_name: evinsights_minio
+    volumes:
+      - ../../volumes/evinsights/minio-data:/data
+    networks:
+      - www
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_ADDRESS=${MINIO_ADDRESS}
+      - MINIO_PORT=${MINIO_PORT}
+      - MINIO_STORAGE_USE_HTTPS=${MINIO_STORAGE_USE_HTTPS}
+      - MINIO_CONSOLE_ADDRESS=${MINIO_CONSOLE_ADDRESS}
+    healthcheck:
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/${MINIO_PORT}' || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 5
+    command: server /data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights_minio-server.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_minio-server.entrypoints=web"
+      - "traefik.http.routers.evinsights_minio-server.service=evinsights_minio-server"
+      - "traefik.http.services.evinsights_minio-server.loadbalancer.server.port=${MINIO_PORT}"
+
+      - "traefik.http.routers.evinsights_minio.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_minio.entrypoints=web"
+      - "traefik.http.routers.evinsights_minio.service=evinsights_minio"
+      - "traefik.http.services.evinsights_minio.loadbalancer.server.port=${MINIO_CONSOLE_PORT}"
+
+  # Create a bucket named ${AWS_BUCKET_NAME} if it doesn't exist
+  minio-create-bucket:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - www
+    entrypoint: >
+      bash -c "
+      mc alias set minio http://minio:${MINIO_PORT} ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
+      if ! mc ls minio | grep --quiet ${AWS_BUCKET_NAME}; then
+        mc mb minio/${AWS_BUCKET_NAME}
+      else
+        echo '${AWS_BUCKET_NAME} already exists'
+      fi
+      "
+
+# https://mlflow.org/docs/latest/python_api/mlflow.environment_variables.html
+# https://mlflow.org/docs/latest/tracking/tutorials/remote-server.html?highlight=compose
+# https://github.com/mlflow/mlflow/pkgs/container/mlflow
+  mlflow:
+    restart: always
+    build:
+      context: .
+    image: ghcr.io/mlflow/mlflow:v2.15.0
+    container_name: evinsights_mlflow
+    networks:
+      - www
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:${MINIO_PORT}
+      - MLFLOW_S3_IGNORE_TLS=true
+    command: >
+      bash -c "apt-get -y update &&
+               apt-get -y install python3-dev default-libmysqlclient-dev build-essential pkg-config &&
+               pip install --upgrade pip &&
+               pip install mysqlclient &&
+               pip install psycopg2-binary &&
+               pip install boto3 &&
+               mlflow server --backend-store-uri postgresql://${MLFLOW_PG_USER}:${MLFLOW_PG_PASSWORD}@postgres:${PG_PORT}/${MLFLOW_PG_DATABASE} --host 0.0.0.0 --port 5000 --serve-artifacts --artifacts-destination s3://${AWS_BUCKET_NAME}"
+    depends_on:
+      - postgres
+      - minio
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights_mlflow.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_mlflow.entrypoints=web"
+      - "traefik.http.routers.evinsights_mlflow.service=evinsights_mlflow"
+      - "traefik.http.services.evinsights_mlflow.loadbalancer.server.port=${MLFLOW_PORT}"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: evinsights_prometheus
+    restart: unless-stopped
+    user: 1000:1000
+    networks:
+      - www
+    volumes:
+      - ../../volumes/evinsights/prometheus-data:/prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evinsights_prometheus.rule=Host(`<your_hostname>`)"
+      - "traefik.http.routers.evinsights_prometheus.entrypoints=web"
+      - "traefik.http.routers.evinsights_prometheus.service=evinsights_prometheus"
+      - "traefik.http.services.evinsights_prometheus.loadbalancer.server.port=${PROMETHEUS_PORT}"

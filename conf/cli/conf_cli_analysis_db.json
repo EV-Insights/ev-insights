@@ -1,0 +1,348 @@
+{
+    "service": "analysis",
+    "services": {
+        "analysis": {
+            "name": "analysis",
+            "output_dir": "service/analysis",
+            "interfaces": {
+                "input": {
+                    "name": "PostgreSql",
+                    "type": "input",
+                    "output_dir": "interface/input",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                },
+                "output": {
+                    "name": "PostgreSql",
+                    "type": "output",
+                    "output_dir": "interface/output",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                }
+            },
+            "utils": {
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            },
+            "analysis": [
+                {
+                    "id": 1,
+                    "name": "total_energy_supplied_by_weekday",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied": null,
+                            "charging_station_id":  [2, 6, 7]
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_weekday": null
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "total_energy_supplied_by_weekday",
+                    "info": "Plug duration filtered between 30 and 1200 seconds",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied":  null
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_weekday": null,
+                        "plug_duration": {
+                            "min": 30,
+                            "max": 1200
+                        }
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "distribution_of_energy_demand",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "energy_supplied":  null
+                        }
+                    },
+                    "custom_params": {
+                        "energy_supplied_clip": {
+                            "min": 0,
+                            "max": 70
+                        }
+                    }
+                },
+                {
+                    "id": 4,
+                    "name": "plug_duration",
+                    "info": "Plug duration clipped between 0 and 600",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            }
+                        }
+                    },
+                    "custom_params": {
+                        "plug_duration": null,
+                        "plug_duration_clip": {
+                            "min": 0,
+                            "max": 600
+                        }
+                    }
+                },
+                {
+                    "id": 5,
+                    "name": "number_of_charges_by_weekday",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied":  null
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_weekday": null
+                    }
+                },
+                {
+                    "id": 6,
+                    "name": "number_of_charges_by_hour",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            }
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_hour": null,
+                        "plug_out_hour": null
+                    }
+                },
+                {
+                    "id": 7,
+                    "name": "animated_energy_duration",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "dataset_country": null,
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied": null
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_weekday": null,
+                        "plug_duration": null,
+                        "plug_duration_clip": {
+                            "min": 0,
+                            "max": 600
+                        }
+                    }
+                },
+                {
+                    "id": 8,
+                    "name": "energy_supplied_by_plugin_hour",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied": null
+                        }
+                    },
+                    "custom_params": {
+                        "energy_supplied_clip": {
+                            "min": 0,
+                            "max": 70
+                        },
+                        "plug_in_hour": null
+                    }
+                },
+                {
+                    "id": 9,
+                    "name": "plug_duration_by_plugin_hour",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": false,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            }
+                        }
+                    },
+                    "custom_params": {
+                        "plug_duration": null,
+                        "plug_duration_clip": {
+                            "min": 0,
+                            "max": 600
+                        },
+                        "plug_in_hour": null
+                    }
+                },
+                {
+                    "id": 10,
+                    "name": "stats",
+                    "info": "",
+                    "enabled": false,
+                    "full_custom_mode": true,
+                    "show_images": false,
+                    "save_images": false,
+                    "save_results": true
+                },
+                {
+                    "id": 11,
+                    "name": "stats",
+                    "info": "Stats dataset",
+                    "enabled": true,
+                    "full_custom_mode": true,
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": [],
+                        "merge_datasets": false,
+                        "fields": {
+                            "dataset_name": null,
+                            "user_id": null,
+                            "plug_in_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "plug_out_datetime": {
+                                "from": null,
+                                "to": null
+                            },
+                            "energy_supplied": null
+                        }
+                    },
+                    "custom_params": {
+                        "entity": "dataset",
+                        "id": 1,
+                        "plug_duration": null,
+                        "energy_supplied_clip": {
+                            "min": 0,
+                            "max": 100
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

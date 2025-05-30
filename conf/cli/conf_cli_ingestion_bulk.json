@@ -1,0 +1,39 @@
+{
+    "service": "ingestion",
+    "services": {
+        "ingestion": {
+            "name": "ingestion",
+            "output_dir": "service/ingestion",
+            "interfaces": {
+                "input": {
+                    "name": "File",
+                    "type": "input",
+                    "input_dir": "../../data/input/public_datasets/",
+                    "output_dir": "interface/input",
+                    "limit_rows": null,
+                    "input_data_type": "bulk",
+                    "datasets_list": ["ACN_Caltech", "AMB_Barcellona", "Elaad", "OLEV", "BeLib", "Harvard_dataverse", "Norway_12loc"],
+                    "datasets_details_file": "data\\input\\datasets_details.csv"
+                },
+                "output": {
+                    "name": "PostgreSql",
+                    "type": "output",
+                    "output_dir": "interface/output",
+                    "host": "localhost",
+                    "port": 5432,
+                    "user": "evinsights",
+                    "password": "evinsights",
+                    "database": "evinsights"
+                }
+            },
+            "utils": {
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            }
+        }
+    }
+}

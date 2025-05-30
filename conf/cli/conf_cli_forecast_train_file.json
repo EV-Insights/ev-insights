@@ -1,0 +1,71 @@
+{
+    "service": "forecast",
+    "services": {
+        "forecast": {
+            "name": "forecast",
+            "output_dir": "service/forecast",
+            "models_dir": "../../data/input/forecast_models/",
+            "interfaces": {
+                "input": {
+                    "name": "File",
+                    "type": "input",
+                    "input_dir": "../../data/input/public_datasets/",
+                    "output_dir": "interface/input",
+                    "limit_rows": 1000,
+                    "input_data_type": "bulk",
+                    "datasets_list": ["ACN_Caltech"],
+                    "datasets_details_file": "data/input/datasets_details.csv"
+                },
+                "output": {
+                    "name": "File",
+                    "type": "output",
+                    "input_dir": "",
+                    "output_dir": "interface/output",
+                    "limit_rows": 100,
+                    "datasets_list": [],
+                    "datasets_details_file": ""
+                }
+            },
+            "utils": {
+                "input_dir": "../../data/input/",
+                "output_dir": "../../data/output/",
+                "logger": {
+                    "output_dir": "log/",
+                    "email_notifications": false,
+                    "to_address_list": []
+                }
+            },
+            "forecast": [
+                {
+                    "id": 1,
+                    "name": "xgboost_charge_duration",
+                    "algo": "xgboost",
+                    "info": "",
+                    "enabled": true,
+                    "full_custom_mode": false,
+                    "mode": "train",
+                    "model_name": "model.ubj",
+                    "show_images": true,
+                    "save_images": true,
+                    "save_results": true,
+                    "data_selection": {
+                        "datasets": ["ACN_Caltech"],
+                        "merge_datasets": false,
+                        "fields": {
+                            "plug_in_datetime": null,
+                            "plug_out_datetime": null,
+                            "energy_supplied": null,
+                            "ev_max_charging_power": null
+                        }
+                    },
+                    "custom_params": {
+                        "plug_in_month": null,
+                        "plug_in_weekday": null,
+                        "plug_in_hour_minutes": null,
+                        "plug_duration": null
+                    }
+                }
+            ]
+        }
+    }
+}
